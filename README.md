@@ -58,17 +58,25 @@ Use the trained classifier to classify lymphocytes and compute lymphocyte-relate
 ```
 Cellular_Profiling_and_Subtyping_of_Brest_cancer_TME/
 ├── data/
-│   ├── Train/                # Training images and masks
-│   ├── Test/                 # Testing images
-├── results/                  # Generated results (features, classifications, subtypes)
+│   ├── images/                                  # Directory containing input images for training and testing
+│   ├── masks/                                   # Directory containing ground truth masks for training and evaluation
+├── docs/                                        # Documentation and related files, including the paper
 ├── src/
-│   ├── segmentation/         # MCC-UNet model and training scripts
-│   ├── feature_extraction/   # Feature extraction scripts
-│   ├── classification/       # Lymphocyte classification scripts
-│   ├── analysis/             # Tumor subtyping and clustering scripts
-├── figures/                  # Pipeline and result figures
-├── environment.yml           # Conda environment configuration
-├── README.md                 # Documentation
+│   ├── segmentation/                            # Scripts for MCC-UNet segmentation pipeline
+│   │  ├── custom_loss.py                        # Implementation of the custom loss function
+│   │  ├── dataset_loader.py                     # Dataset loader for images and masks
+│   │  ├── mask_generation.py                    # Script for generating segmentation masks using the trained model
+│   │  ├── train.py                              # Script to train the MCC-UNet model
+│   │  ├── unet3d.py                             # Definition of the MCC-UNet 3D architecture
+│   ├── analysis/                                # Scripts for tumor subtyping, clustering, and analysis
+│   │  ├── consensus_clustering.py               # Script for performing consensus clustering
+│   │  ├── lymphocyte_association.ipynb          # Notebook for analyzing lymphocyte associations
+│   │  ├── Lymphocytes_classification.py         # Script for classifying lymphocytes
+│   │  ├── process_masks.py                      # Script for processing masks for feature extraction
+│   │  ├── nuclear_subtyping.py                  # Script for nuclear subtyping and feature aggregation
+├── lymphocyte_env/                              # Virtual environment directory
+├── README.md                                    # Documentation and project overview
+├── requirements.txt                             # List of required libraries and dependencies
 ```
 
 ---
@@ -83,9 +91,9 @@ Cellular_Profiling_and_Subtyping_of_Brest_cancer_TME/
   - Identified three tumor subtypes with distinct characteristics.
 
 - **Lymphocyte Classification**:
-  - Accuracy: 92%
-  - Precision: 91%
-  - Recall: 93%
+  - Accuracy: 97.1%
+  - Precision: 97.9%
+  - Recall: 97.1%
 
 ---
 
