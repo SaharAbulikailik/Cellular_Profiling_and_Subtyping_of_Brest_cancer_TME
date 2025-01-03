@@ -1,7 +1,5 @@
 # Cellular_Profiling_and_Subtyping_of_Brest_cancer_TME
 =======
-Here's the updated **README.md** with placeholders for your figures and results, extracted from the uploaded paper:
-
 ---
 
 ### **`README.md`**
