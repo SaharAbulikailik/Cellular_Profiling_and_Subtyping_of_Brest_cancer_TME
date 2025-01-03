@@ -9,8 +9,8 @@ This repository contains the implementation for cellular profiling and subtyping
 This project addresses the dynamic nature of the tumor microenvironment by:
 - **Segmenting Nuclei**: Using MCC-UNet for accurate segmentation of nuclei in multispectral immunofluorescence images.
 - **Extracting Features**: Computing morphometric and protein expression indices.
-- **Classifying Cells**: Classifying lymphocytes using machine learning models.
-- **Tumor Subtyping**: Clustering tumor features to identify subtypes and their biological significance.
+- **Classifying Cells**: Classifying lymphocytes using MLP model.
+- **Tumor Subtyping**: Tumor subtyping and association to clinical variables.
 
 ---
 
