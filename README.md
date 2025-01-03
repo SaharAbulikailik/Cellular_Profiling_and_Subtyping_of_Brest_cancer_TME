@@ -58,8 +58,8 @@ Use the trained classifier to classify lymphocytes and compute lymphocyte-relate
 ```
 Cellular_Profiling_and_Subtyping_of_Brest_cancer_TME/
 ├── data/
-│   ├── images/                                  # Directory containing input images for training and testing
-│   ├── masks/                                   # Directory containing ground truth masks for training and evaluation
+│   ├── augmented_images/                                  # Directory containing input images for training and testing
+│   ├── augmented_masks/                                   # Directory containing ground truth masks for training and evaluation
 ├── docs/                                        # Documentation and related files, including the paper
 ├── src/
 │   ├── segmentation/                            # Scripts for MCC-UNet segmentation pipeline
