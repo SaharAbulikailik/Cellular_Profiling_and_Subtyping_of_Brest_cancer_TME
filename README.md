@@ -45,11 +45,18 @@ Use the trained MCC-UNet model to predict and save segmentation masks for test i
 ### **4. Extract Features**
 Compute morphometric and protein expression features from segmented masks.
 
-### **5. Perform Tumor Subtyping**
+### **5. Perform nuclear Subtyping**
 Cluster the extracted features to identify tumor subtypes and their characteristics.
 
 ### **6. Classify Lymphocytes**
 Use the trained classifier to classify lymphocytes and compute lymphocyte-related metrics.
+
+### **7. Aggregate all features**
+
+### **8. Tumor subtypes**
+
+
+
 
 ---
 
