@@ -1,146 +1,105 @@
-# Cellular_Profiling_and_Subtyping_of_Brest_cancer_TME
-=======
----
-
-### **`README.md`**
-
-```markdown
 # Cellular Profiling and Subtyping of Breast Cancer Tumor Microenvironment (TME)
 
-This repository accompanies our study on cellular profiling and subtyping of the breast cancer tumor microenvironment (TME). The project leverages the MCC-UNet model for robust nuclear segmentation and subsequent computational analysis, providing insights into tumor composition and immune profiles.
-
----
-
-## Table of Contents
-
-1. [Overview](#overview)
-2. [Pipeline](#pipeline)
-3. [Results](#results)
-4. [Installation](#installation)
-5. [Usage](#usage)
-6. [Data](#data)
-7. [Citation](#citation)
+This repository contains the implementation for cellular profiling and subtyping of breast cancer TME, leveraging MCC-UNet for robust nuclear segmentation and downstream analysis for tumor subtyping and immune profiling.
 
 ---
 
 ## **Overview**
 
-The breast cancer TME evolves dynamically during tumorigenesis, influenced by systemic inflammation and treatment interventions. This repository focuses on:
-- **Accurate Nuclear Segmentation**: Using MCC-UNet to segment nuclei in multispectral immunofluorescence images.
-- **Computational Analysis**: Deriving morphometric and protein expression features for tumor subtyping and immune profiling.
+This project addresses the dynamic nature of the tumor microenvironment by:
+- **Segmenting Nuclei**: Using MCC-UNet for accurate segmentation of nuclei in multispectral immunofluorescence images.
+- **Extracting Features**: Computing morphometric and protein expression indices.
+- **Classifying Cells**: Classifying lymphocytes using machine learning models.
+- **Tumor Subtyping**: Clustering tumor features to identify subtypes and their biological significance.
 
 ---
 
 ## **Pipeline**
 
-The pipeline integrates data acquisition, segmentation, feature extraction, and tumor subtyping into a cohesive workflow:
+The pipeline integrates tumor growth, imaging, segmentation, feature extraction, classification, and subtyping into a streamlined workflow:
 
-![Pipeline Overview](figures/pipeline_figure.png) <!-- Replace with the actual file path -->
+![Pipeline Overview](figures/pipeline_figure.png)
 
-1. **Data Acquisition**:
-   - Imaging of tumor sections stained for nuclear and cytoplasmic protein markers.
-2. **Segmentation**:
-   - Application of MCC-UNet for nuclei segmentation.
-3. **Feature Extraction**:
-   - Calculation of morphometric and protein expression indices.
-4. **Subtype Analysis**:
-   - Tumor subtyping using clustering algorithms and visualization.
+1. **Tumor Sectioning, Staining, and Imaging**
+2. **Multi-Spectral Image Segmentation** with MCC-UNet
+3. **Feature Aggregation, Subtyping, and Analysis**
+4. **Visualization of Results**
+
+---
+
+## **Steps to Use the Repository**
+
+### **1. Prepare the Environment**
+Install all required dependencies:
+```bash
+conda env create -f environment.yml
+conda activate lymphocyte_env
+```
+
+### **2. Train the MCC-UNet Model**
+Organize your training images and masks under the `data/Train` directory. Train the MCC-UNet model to segment nuclei.
+
+### **3. Generate Segmentation Masks**
+Use the trained MCC-UNet model to predict and save segmentation masks for test images.
+
+### **4. Extract Features**
+Compute morphometric and protein expression features from segmented masks.
+
+### **5. Perform Tumor Subtyping**
+Cluster the extracted features to identify tumor subtypes and their characteristics.
+
+### **6. Classify Lymphocytes**
+Use the trained classifier to classify lymphocytes and compute lymphocyte-related metrics.
+
+---
+
+## **Repository Structure**
+
+```
+Cellular_Profiling_and_Subtyping_of_Brest_cancer_TME/
+├── data/
+│   ├── Train/                # Training images and masks
+│   ├── Test/                 # Testing images
+├── results/                  # Generated results (features, classifications, subtypes)
+├── src/
+│   ├── segmentation/         # MCC-UNet model and training scripts
+│   ├── feature_extraction/   # Feature extraction scripts
+│   ├── classification/       # Lymphocyte classification scripts
+│   ├── analysis/             # Tumor subtyping and clustering scripts
+├── figures/                  # Pipeline and result figures
+├── environment.yml           # Conda environment configuration
+├── README.md                 # Documentation
+```
 
 ---
 
 ## **Results**
 
-### **Segmentation**
-- **Dice Score**: 95.71
-- **Panoptic Quality**: 82.53
-- MCC-UNet surpasses other models, such as StarDist and CellPose, in segmenting dense nuclear regions.
+- **Segmentation**:
+  - Dice Score: 95.71%
+  - Panoptic Quality: 82.53%
 
-![Segmentation Results](figures/segmentation_results.png) <!-- Replace with actual file path -->
+- **Tumor Subtyping**:
+  - Identified three tumor subtypes with distinct characteristics.
 
-### **Lymphocyte Classification**
-- Utilized a Multi-layer Perceptron (MLP) classifier for lymphocyte identification.
-- **Accuracy**: 92%
-- **Precision**: 91%
-- **Recall**: 93%
-
-### **Tumor Subtyping**
-- Identified three distinct tumor subtypes:
-  1. **Subtype A**: High immune infiltration, slower growth.
-  2. **Subtype B**: Aggressive tumor behavior with low lymphocyte frequency.
-  3. **Subtype C**: Intermediate properties with distinct molecular signatures.
-
-![Subtype Analysis](figures/tumor_subtyping.png) <!-- Replace with actual file path -->
-
----
-
-## **Installation**
-
-Clone the repository and set up the environment:
-```bash
-git clone https://github.com/username/Cellular_Profiling_and_Subtyping_of_Breast_Cancer_TME.git
-cd Cellular_Profiling_and_Subtyping_of_Breast_Cancer_TME
-conda env create -f environment.yml
-conda activate lymphocyte_env
-```
-
----
-
-## **Usage**
-
-### **1. Segmentation**
-
-1. Navigate to the segmentation directory:
-   ```bash
-   cd src/segmentation
-   ```
-2. Train the MCC-UNet model:
-   ```bash
-   python train.py
-   ```
-3. Generate segmentation masks:
-   ```bash
-   python generate_masks.py
-   ```
-
-### **2. Lymphocyte Classification**
-
-1. Navigate to the classification directory:
-   ```bash
-   cd src/classification
-   ```
-2. Run the classification pipeline:
-   ```bash
-   python classify_lymphocytes.py
-   ```
-
----
-
-## **Data**
-
-Organize your dataset in the following structure:
-```plaintext
-data/
-├── Train/
-│   ├── augmented_images/   # Training images
-│   ├── augmented_masks/    # Corresponding masks
-├── Test/
-```
+- **Lymphocyte Classification**:
+  - Accuracy: 92%
+  - Precision: 91%
+  - Recall: 93%
 
 ---
 
 ## **Citation**
 
-If you use this repository in your work, please cite our study:
+If you use this repository, please cite our work:
 
-[Paper Title Here]
-
-**Authors**: [List of authors here]  
-**DOI**: [DOI Link Here]  
+**Paper Title**: Robust Cellular Profiling of the Tumor Microenvironment Unveils Subtype-specific Growth Patterns  
+**Authors**: [Sahar Mohammed]  
+**DOI**: [Link Here]
 
 ---
 
 ## **Contact**
 
-For questions or collaborations, contact Sahar Mohammed at saharabulikailik@gmail.com 
-```
+For questions or collaborations, contact **[Sahar Mohammed]** at **[saharabulikailik@gmail.com]**.
 
