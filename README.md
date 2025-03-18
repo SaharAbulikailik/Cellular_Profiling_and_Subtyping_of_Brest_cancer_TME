@@ -18,7 +18,7 @@ This project addresses the dynamic nature of the tumor microenvironment by:
 
 The pipeline integrates tumor growth, imaging, segmentation, feature extraction, classification, and subtyping into a streamlined workflow:
 
-![Pipeline Overview](docs/pipeline.png)
+![Pipeline Overview](docs/Figure1.tif)
 
 1. **Tumor Sectioning, Staining, and Imaging**
 2. **Multi-Spectral Image Segmentation** with MCC-UNet
