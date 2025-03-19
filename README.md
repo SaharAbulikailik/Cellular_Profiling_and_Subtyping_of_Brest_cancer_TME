@@ -18,7 +18,7 @@ This project addresses the dynamic nature of the tumor microenvironment by:
 
 The pipeline integrates tumor growth, imaging, segmentation, feature extraction, classification, and subtyping into a streamlined workflow:
 
-![Pipeline Overview](docs/Figure1.tif)
+![Pipeline Overview](docs/Figure1.png)
 
 1. **Tumor Sectioning, Staining, and Imaging**
 2. **Multi-Spectral Image Segmentation** with MCC-UNet
@@ -49,7 +49,7 @@ Compute morphometric and protein expression features from segmented masks.
 Cluster the extracted features to identify tumor subtypes and their characteristics.
 
 ### **6. Classify Lymphocytes**
-Use the trained classifier to classify lymphocytes and compute lymphocyte-related metrics.
+Classify Lymphocytes using measured features.
 
 ### **7. Aggregate all features**
 
@@ -95,12 +95,12 @@ Cellular_Profiling_and_Subtyping_of_Brest_cancer_TME/
   - Panoptic Quality: 82.53%
 
 - **Tumor Subtyping**:
-  - Identified three tumor subtypes with distinct characteristics.
+  - Identified four tumor subtypes with distinct characteristics using phenotypic indices.
 
 - **Lymphocyte Classification**:
-  - Accuracy: 97.1%
-  - Precision: 97.9%
-  - Recall: 97.1%
+  - Accuracy: 97%
+  - Precision: 98%
+  - Recall: 97%
 
 ---
 

@@ -123,7 +123,7 @@ def run_epoch(loader, model, criterion, optimizer, device, is_train=True):
     return epoch_loss / dataset_len, metrics
 
 if __name__ == "__main__":
-    DATA_PATH = "/home/sahar/Cellular_Profiling_and_Subtyping_of_Brest_cancer_TME/data/Train"
+    DATA_PATH = "/home/sahar/Cellular_Profiling_and_Subtyping_of_Brest_cancer_TME/data"
     SAVE_PATH = "/home/sahar/Cellular_Profiling_and_Subtyping_of_Brest_cancer_TME/saved_model"
 
     os.makedirs(SAVE_PATH, exist_ok=True)
