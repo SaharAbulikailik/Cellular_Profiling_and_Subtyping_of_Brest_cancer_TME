@@ -27,35 +27,31 @@ The pipeline integrates tumor growth, imaging, segmentation, feature extraction,
 
 ---
 
-## **Steps to Use the Repository**
 
-### **1. Prepare the Environment**
-Install all required dependencies:
-```bash
-conda env create -f environment.yml
-conda activate lymphocyte_env
-```
+## **Analysis Steps**
 
-### **2. Train the MCC-UNet Model**
-Organize your training images and masks under the `data/Train` directory. Train the MCC-UNet model to segment nuclei.
+The downstream analysis proceeds as follows:
 
-### **3. Generate Segmentation Masks**
-Use the trained MCC-UNet model to predict and save segmentation masks for test images.
+1. **Segment Tumor Microenvironment (TME) Images**  
+   Apply MCC-UNet to segment nuclei from multispectral immunofluorescence images.
 
-### **4. Extract Features**
-Compute morphometric and protein expression features from segmented masks.
+2. **Measure Morphology and Protein Expression**  
+   Extract cellular features such as area, elongation, solidity, and intensity-based protein expression indices from segmented masks.
 
-### **5. Perform nuclear Subtyping**
-Cluster the extracted features to identify tumor subtypes and their characteristics.
+3. **Classify Lymphocytes**  
+   Use a subset of the extracted features to classify cells into lymphocytes and non-lymphocytes using an MLP model.
 
-### **6. Classify Lymphocytes**
-Classify Lymphocytes using measured features.
+4. **Localize Lymphocytes**  
+   Apply Delaunay triangulation to the classified lymphocytes for spatial localization. Add lymphocyte labels and their localization results to the spreadsheet for each image.
 
-### **7. Aggregate all features**
+5. **Subtype Tumors via Consensus Clustering**  
+   Perform consensus clustering on the aggregated feature matrix to identify tumor subtypes with distinct characteristics.
 
-### **8. Tumor subtypes**
+6. **Measure Feature Frequencies per Tumor**  
+   Compute the frequency of morphometric and protein expression features for each tumor to represent phenotype prevalence.
 
-
+7. **Visualize Subtypes**  
+   Use frequency tables to generate heatmaps and other visualizations to highlight subtype-specific profiles.
 
 
 ---
