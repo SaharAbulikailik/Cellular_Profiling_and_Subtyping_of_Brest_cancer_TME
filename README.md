@@ -1,6 +1,6 @@
 # Cellular Profiling and Subtyping of Breast Cancer Tumor Microenvironment (TME)
 
-This repository contains the implementation for **cellular profiling and subtyping of breast cancer TME**, leveraging the **MCC-UNet** model for robust nuclear segmentation and downstream analysis to uncover tumor subtypes and immune phenotypes.
+This repository contains the implementation for **cellular profiling and subtyping of breast cancer TME**, leveraging the **LoGSAGE-CBAM** model for robust nuclear segmentation and downstream analysis to uncover tumor subtypes and immune phenotypes.
 
 ---
 
@@ -8,10 +8,19 @@ This repository contains the implementation for **cellular profiling and subtypi
 
 This project addresses the complexity of the tumor microenvironment by:
 
-- **Nuclear Segmentation**: Accurate segmentation of nuclei in multispectral immunofluorescence images using MCC-UNet.
+- **Nuclear Segmentation**: Accurate segmentation of densely packed nuclei in multispectral immunofluorescence images using LoGSAGE-CBAM.
 - **Feature Extraction**: Morphometric and protein expression-based profiling of each cell.
 - **Lymphocyte Classification**: Classification of lymphocytes using a multi-layer perceptron (MLP).
-- **Tumor Subtyping**: Phenotype-driven tumor subtype discovery and association with clinical variables.
+- **Tumor Subtyping**: Phenotype-driven tumor subtype discovery and association with growth latency and molecular expression patterns.
+
+---
+
+## 🌟 Highlights
+
+- Introduces **LoGSAGE-CBAM**, a dual-stream segmentation model combining Laplacian-based saliency and Swin Transformer vision encoding.
+- Incorporates **curvature-aware loss** to enhance biological accuracy in nuclear boundaries.
+- Enables **cell classification and spatial profiling** using extracted cellular indices.
+- Reveals **subtype-specific immune and morphological signatures** predictive of growth and latency.
 
 ---
 
@@ -24,17 +33,34 @@ The pipeline integrates imaging, segmentation, feature extraction, classificatio
 </p>
 
 1. Tumor harvesting, staining, and multispectral imaging  
-2. Nuclear segmentation using MCC-UNet  
+2. Nuclear segmentation using LoGSAGE-CBAM  
 3. Feature extraction and cellular classification  
 4. Tumor subtyping and clinical association  
 5. Visualization and downstream analysis  
 
 ---
 
+## 🧠 Model Architecture
+
+<p align="center">
+  <img src="docs/Model.png" alt="LoGSAGE-CBAM Architecture" width="700"/>
+</p>
+
+LoGSAGE-CBAM consists of two parallel encoders:
+- A **saliency encoder** using Laplacian-of-Gaussian filtered DAPI to highlight nuclear structures based on UNet encoder
+- A **Multi-spectral images encoder** based on a Swin Transformer
+- A **CBAM-based fusion block** to adaptively merge both representations
+- A UNet decoder
+- Model trained with a **composite loss**:
+  - **Dice Loss** for overlap accuracy
+  - **Curvature Loss** for smooth, accurate boundaries
+
+---
+
 ## 🧪 Analysis Workflow
 
 1. **Segment Tumor Microenvironment Images**  
-   - Segment nuclei using MCC-UNet.
+   - Segment nuclei using LoGSAGE-CBAM.
 
 2. **Extract Morphological & Protein Features**  
    - Compute area, elongation, solidity, and intensities for DAPI, CD3, CD8, Ki67, Caspase, and pSMAD.
@@ -43,16 +69,16 @@ The pipeline integrates imaging, segmentation, feature extraction, classificatio
    - Use MLP to classify cells as lymphocytes or non-lymphocytes.
 
 4. **Localize Lymphocytes**  
-   - Apply Delaunay triangulation to map lymphocyte distribution.
+   - Apply Delaunay triangulation for lymphocytes localization.
 
-5. **Cluster Tumors via Consensus Clustering**  
-   - Perform clustering on tumor-level feature frequencies to define subtypes.
+5. **Cluster indecies via Consensus Clustering**  
+   - Perform clustering on each feature to define high and low values.
 
 6. **Quantify Feature Frequencies per Tumor**  
    - Summarize morphological and expression profiles across tumors.
 
 7. **Visualize Subtype Patterns**  
-   - Generate heatmaps, t-SNE plots, and survival curves for subtype comparison.
+   - Generate heatmaps, t-SNE plots, and Agressiveness curves (Latency and Growth) for subtype comparison.
 
 ---
 
@@ -70,6 +96,8 @@ The pipeline integrates imaging, segmentation, feature extraction, classificatio
 │   └── ...
 ├── README.md
 ├── requirements.txt
+├── saved_model/
+├── saved_models/
 └── src/
     ├── analysis/
     │   ├── consensus_clustering.py
@@ -94,6 +122,19 @@ The pipeline integrates imaging, segmentation, feature extraction, classificatio
   <img src="docs/Results.png" alt="Segmentation Results" width="700"/>
 </p>
 
+| Task                     | Metric                     | Score   |
+|--------------------------|----------------------------|---------|
+| **Segmentation**         | Dice Score                 | 95.5    |
+|                          | Relative Count Error (RCE) | 86.6    |
+| **Lymphocyte Detection** | Accuracy                   | 97.0    |
+|                          | Precision                  | 98.0    |
+|                          | Recall                     | 97.0    |
+|                          | AUC                        | 99.0    |
+| **Tumor Subtyping**      | # of Subtypes              | 4       |
+
+> **Note:** RCE (Relative Count Error) evaluates segmentation performance by comparing the number of predicted nuclei (N_pred) to the number of ground truth nuclei (N_true). It is defined as:  
+> \[ RCE = 1 - \frac{|N_{\text{pred}} - N_{\text{true}}|}{N_{\text{true}} - \epsilon} \]  
+> where \( \epsilon \) is a small constant to avoid division by zero. RCE emphasizes biologically meaningful object-level accuracy.
 
 ---
 
@@ -105,15 +146,6 @@ conda activate logsage_cbam
 pip install -r requirements.txt
 ```
 
----
-
-## 📚 Citation
-
-If you use this repository, please cite:
-
-**Title**: *Robust Cellular Profiling of the Tumor Microenvironment Unveils Subtype-specific Growth Patterns*  
-**Author**: Sahar Mohammed  
-**DOI**: [AfterAccpetance]
 
 ---
 
