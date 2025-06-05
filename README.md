@@ -132,9 +132,9 @@ LoGSAGE-CBAM consists of two parallel encoders:
 |                          | AUC                        | 99.0    |
 | **Tumor Subtyping**      | # of Subtypes              | 4       |
 
-> **Note:** RCE (Relative Count Error) evaluates segmentation performance by comparing the number of predicted nuclei (N_pred) to the number of ground truth nuclei (N_true). It is defined as:  
-> \[ RCE = 1 - \frac{|N_{\text{pred}} - N_{\text{true}}|}{N_{\text{true}} - \epsilon} \]  
-> where \( \epsilon \) is a small constant to avoid division by zero. RCE emphasizes biologically meaningful object-level accuracy.
+> **Note:** RCE (Relative Count Error) evaluates segmentation performance by comparing the number of predicted nuclei (N_pred) to the number of ground truth nuclei (N_true). It emphasizes biologically meaningful object-level accuracy.
+>
+> <img src="docs/metric.png" alt="RCE formula" width="320"/>
 
 ---
 
