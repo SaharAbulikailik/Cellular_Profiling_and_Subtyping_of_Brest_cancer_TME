@@ -17,7 +17,7 @@ This project addresses the complexity of the tumor microenvironment by:
 
 ## 🌟 Highlights
 
-- Introduces **LoGSAGE-CBAM**, a dual-stream segmentation model combining Laplacian-based saliency and Swin Transformer vision encoding.
+- Introduces **LoGSAGE-CBAM**, a dual-encoder segmentation model combining LoG-based saliency and Swin Transformer encoding.
 - Incorporates **curvature-aware loss** to enhance biological accuracy in nuclear boundaries.
 - Enables **cell classification and spatial profiling** using extracted cellular indices.
 - Reveals **subtype-specific immune and morphological signatures** predictive of growth and latency.
