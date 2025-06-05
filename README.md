@@ -1,116 +1,123 @@
 # Cellular Profiling and Subtyping of Breast Cancer Tumor Microenvironment (TME)
 
-This repository contains the implementation for cellular profiling and subtyping of breast cancer TME, leveraging MCC-UNet for robust nuclear segmentation and downstream analysis for tumor subtyping and immune profiling.
+This repository contains the implementation for **cellular profiling and subtyping of breast cancer TME**, leveraging the **MCC-UNet** model for robust nuclear segmentation and downstream analysis to uncover tumor subtypes and immune phenotypes.
 
 ---
 
-## **Overview**
+## 🔬 Overview
 
-This project addresses the dynamic nature of the tumor microenvironment by:
-- **Segmenting Nuclei**: Using MCC-UNet for accurate segmentation of nuclei in multispectral immunofluorescence images.
-- **Extracting Features**: Computing morphometric and protein expression indices.
-- **Classifying Cells**: Classifying lymphocytes using MLP model.
-- **Tumor Subtyping**: Tumor subtyping and association to clinical variables.
+This project addresses the complexity of the tumor microenvironment by:
 
----
-
-## **Pipeline**
-
-The pipeline integrates tumor growth, imaging, segmentation, feature extraction, classification, and subtyping into a streamlined workflow:
-
-![Pipeline Overview](docs/Figure1.png)
-
-1. **Tumor Sectioning, Staining, and Imaging**
-2. **Multi-Spectral Image Segmentation** with MCC-UNet
-3. **Feature Aggregation, Subtyping, and Analysis**
-4. **Visualization of Results**
+- **Nuclear Segmentation**: Accurate segmentation of nuclei in multispectral immunofluorescence images using MCC-UNet.
+- **Feature Extraction**: Morphometric and protein expression-based profiling of each cell.
+- **Lymphocyte Classification**: Classification of lymphocytes using a multi-layer perceptron (MLP).
+- **Tumor Subtyping**: Phenotype-driven tumor subtype discovery and association with clinical variables.
 
 ---
 
+## 🔁 Pipeline
 
-## **Analysis Steps**
+The pipeline integrates imaging, segmentation, feature extraction, classification, clustering, and statistical analysis.
 
-The downstream analysis proceeds as follows:
+<p align="center">
+  <img src="docs/Pipeline.png" alt="Pipeline Overview" width="700"/>
+</p>
 
-1. **Segment Tumor Microenvironment (TME) Images**  
-   Apply MCC-UNet to segment nuclei from multispectral immunofluorescence images.
+1. Tumor harvesting, staining, and multispectral imaging  
+2. Nuclear segmentation using MCC-UNet  
+3. Feature extraction and cellular classification  
+4. Tumor subtyping and clinical association  
+5. Visualization and downstream analysis  
 
-2. **Measure Morphology and Protein Expression**  
-   Extract cellular features such as area, elongation, solidity, and intensity-based protein expression indices from segmented masks.
+---
+
+## 🧪 Analysis Workflow
+
+1. **Segment Tumor Microenvironment Images**  
+   - Segment nuclei using MCC-UNet.
+
+2. **Extract Morphological & Protein Features**  
+   - Compute area, elongation, solidity, and intensities for DAPI, CD3, CD8, Ki67, Caspase, and pSMAD.
 
 3. **Classify Lymphocytes**  
-   Use a subset of the extracted features to classify cells into lymphocytes and non-lymphocytes using an MLP model.
+   - Use MLP to classify cells as lymphocytes or non-lymphocytes.
 
 4. **Localize Lymphocytes**  
-   Apply Delaunay triangulation to the classified lymphocytes for spatial localization. Add lymphocyte labels and their localization results to the spreadsheet for each image.
+   - Apply Delaunay triangulation to map lymphocyte distribution.
 
-5. **Subtype Tumors via Consensus Clustering**  
-   Perform consensus clustering on the aggregated feature matrix to identify tumor subtypes with distinct characteristics.
+5. **Cluster Tumors via Consensus Clustering**  
+   - Perform clustering on tumor-level feature frequencies to define subtypes.
 
-6. **Measure Feature Frequencies per Tumor**  
-   Compute the frequency of morphometric and protein expression features for each tumor to represent phenotype prevalence.
+6. **Quantify Feature Frequencies per Tumor**  
+   - Summarize morphological and expression profiles across tumors.
 
-7. **Visualize Subtypes**  
-   Use frequency tables to generate heatmaps and other visualizations to highlight subtype-specific profiles.
-
+7. **Visualize Subtype Patterns**  
+   - Generate heatmaps, t-SNE plots, and survival curves for subtype comparison.
 
 ---
 
-## **Repository Structure**
+## 📁 Repository Structure
 
 ```
-Cellular_Profiling_and_Subtyping_of_Brest_cancer_TME/
-├── data/
-│   ├── augmented_images/                                  # Directory containing input images for training and testing
-│   ├── augmented_masks/                                   # Directory containing ground truth masks for training and evaluation
-├── docs/                                        # Documentation and related files, including the paper
-├── src/
-│   ├── segmentation/                            # Scripts for MCC-UNet segmentation pipeline
-│   │  ├── custom_loss.py                        # Implementation of the custom loss function
-│   │  ├── dataset_loader.py                     # Dataset loader for images and masks
-│   │  ├── mask_generation.py                    # Script for generating segmentation masks using the trained model
-│   │  ├── train.py                              # Script to train the MCC-UNet model
-│   │  ├── unet3d.py                             # Definition of the MCC-UNet 3D architecture
-│   ├── analysis/                                # Scripts for tumor subtyping, clustering, and analysis
-│   │  ├── consensus_clustering.py               # Script for performing consensus clustering
-│   │  ├── lymphocyte_association.ipynb          # Notebook for analyzing lymphocyte associations
-│   │  ├── Lymphocytes_classification.py         # Script for classifying lymphocytes
-│   │  ├── process_masks.py                      # Script for processing masks for feature extraction
-│   │  ├── nuclear_subtyping.py                  # Script for nuclear subtyping and feature aggregation
-├── lymphocyte_env/                              # Virtual environment directory
-├── README.md                                    # Documentation and project overview
-├── requirements.txt                             # List of required libraries and dependencies
+.
+├── docs
+│   ├── Model.png
+│   ├── Pipeline.png
+│   └── Results.png
+├── lymphocyte_env
+│   ├── bin/
+│   ├── lib/
+│   └── ...
+├── README.md
+├── requirements.txt
+└── src/
+    ├── analysis/
+    │   ├── consensus_clustering.py
+    │   ├── lymphocyte_association.ipynb
+    │   ├── Lymphocytes_classification.py
+    │   ├── nuclear_subtyping.ipynb
+    │   ├── process_masks.py
+    │   └── simK_perweek.ipynb
+    └── segmentation_model/
+        ├── dataset/
+        ├── losses/
+        ├── models/
+        ├── __pycache__/
+        └── train.py
 ```
 
 ---
 
-## **Results**
+## 📊 Results
 
-- **Segmentation**:
-  - Dice Score: 95.71%
-  - Panoptic Quality: 82.53%
+<p align="center">
+  <img src="docs/Results.png" alt="Segmentation Results" width="700"/>
+</p>
 
-- **Tumor Subtyping**:
-  - Identified four tumor subtypes with distinct characteristics using phenotypic indices.
-
-- **Lymphocyte Classification**:
-  - Accuracy: 97%
-  - Precision: 98%
-  - Recall: 97%
 
 ---
 
-## **Citation**
+## 📦 Installation
 
-If you use this repository, please cite our work:
-
-**Paper Title**: Robust Cellular Profiling of the Tumor Microenvironment Unveils Subtype-specific Growth Patterns  
-**Authors**: [Sahar Mohammed]  
-**DOI**: [Link Here]
+```bash
+conda create -n logsage_cbam python=3.10 -y
+conda activate logsage_cbam
+pip install -r requirements.txt
+```
 
 ---
 
-## **Contact**
+## 📚 Citation
 
-For questions or collaborations, contact **[Sahar Mohammed]** at **[saharabulikailik@gmail.com]**.
+If you use this repository, please cite:
 
+**Title**: *Robust Cellular Profiling of the Tumor Microenvironment Unveils Subtype-specific Growth Patterns*  
+**Author**: Sahar Mohammed  
+**DOI**: [AfterAccpetance]
+
+---
+
+## 📬 Contact
+
+For questions or collaborations, contact:  
+📧 **saharabulikailik@gmail.com**
