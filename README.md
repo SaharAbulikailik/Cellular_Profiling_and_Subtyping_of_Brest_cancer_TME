@@ -144,6 +144,8 @@ LoGSAGE-CBAM consists of two parallel encoders:
 conda create -n logsage_cbam python=3.10 -y
 conda activate logsage_cbam
 pip install -r requirements.txt
+
+python src/segmentation_model/train.py
 ```
 
 
