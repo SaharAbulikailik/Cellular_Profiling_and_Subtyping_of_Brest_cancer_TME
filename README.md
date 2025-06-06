@@ -138,7 +138,7 @@ LoGSAGE-CBAM consists of two parallel encoders:
 
 ---
 
-## 📦 Installation
+## 📦 Install Environment and Train
 
 ```bash
 conda create -n logsage_cbam python=3.10 -y
