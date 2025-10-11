@@ -129,7 +129,7 @@ Excel file with columns:
 
 * `area`, `pleomorphism` (or `solidity`), `elongation` (or `eccentricity`), `mean_intensity_DAPI`, `total_intensity_DAPI`, `TARGET` (0/1)
 
-> If `TARGET` is not 0/1, the script maps the smallest label → 0 and largest → 1.
+
 
 ### Train & evaluate
 
@@ -250,18 +250,6 @@ python src/analysis/Lymphocytes_association.py
 > **Note:** RCE (Relative Count Error) evaluates segmentation performance by comparing the number of predicted nuclei (N_pred) to the number of ground truth nuclei (N_true). It emphasizes biologically meaningful object-level accuracy.
 >
 > <img src="docs/metric.png" alt="RCE formula" width="320"/>
-
----
-
-## 📦 Install Environment and Train
-
-```bash
-conda create -n logsage_cbam python=3.10 -y
-conda activate logsage_cbam
-pip install -r requirements.txt
-
-python src/segmentation_model/train.py
-```
 
 ---
 
