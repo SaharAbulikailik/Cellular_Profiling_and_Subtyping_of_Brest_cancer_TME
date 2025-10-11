@@ -21,9 +21,9 @@ import numpy as np
 import pandas as pd
 import cv2
 from scipy import ndimage
-from scipy.ndimage import distance_transform_edt, binary_erosion, binary_dilation
+from scipy.ndimage import distance_transform_edt, binary_erosion
 from scipy.spatial import Delaunay
-from skimage import measure, morphology, segmentation, filters
+from skimage import measure, morphology, segmentation
 from skimage.morphology import area_opening, disk
 from skimage.feature import peak_local_max
 from czifile import imread as read_czi
@@ -219,13 +219,13 @@ def measure_one_image(
         # Build neighbor lists from triangulation
         graph = {}
         for tri_idx in tri.simplices:
-            a, b, c = [int(x) for x in tri_idx]  # ensure Python ints
+            a, b, c = [int(x) for x in tri_idx]
             for u, v in [(a,b),(b,c),(c,a)]:
                 graph.setdefault(u, set()).add(v)
                 graph.setdefault(v, set()).add(u)
         for i in range(len(props)):
             if i in graph:
-                neigh = sorted(int(n) for n in graph[i])  # cast to int
+                neigh = sorted(int(n) for n in graph[i])
                 neighbors[i] = neigh
                 neighbor_lengths[i] = [float(np.linalg.norm(centroids[i] - centroids[j])) for j in neigh]
 
@@ -240,7 +240,7 @@ def measure_one_image(
 
         # Per-channel stats
         dapi_vals = DAPI[rr, cc]
-        mean_dapi, med_dapi = float(np.mean(dapi_vals)), float(np.median(dapi_vals))
+        mean_dapi = float(np.mean(dapi_vals))
         total_dapi = float(dapi_vals.sum())
 
         cd3_mean,  cd3_med  = _stats_positive((ring * CD3).astype(np.float32)[ring > 0])
@@ -313,11 +313,9 @@ def parse_args():
     ap.add_argument("--chan-Ki67",    type=int, default=4)
     ap.add_argument("--chan-Caspase", type=int, default=5)
 
-    # ⬇️ put THIS line here
-    ap.add_argument("--only", type=str, default="", help="Process only this file basename (e.g., A1819-P0203-4MGLTumor-1)")
-
+    # filter a single image by basename (no extension needed)
+    ap.add_argument("--only", type=str, default="", help="Process only this file basename (e.g., A1819_P0203_4MGLTumor_1)")
     return ap.parse_args()
-
 
 
 def main():
@@ -330,20 +328,27 @@ def main():
     masks_dir.mkdir(parents=True, exist_ok=True)
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
-    files = sorted([f for f in os.listdir(images_dir) if f.lower().endswith("." + args.ext.lower())])
+    # collect image files (case-insensitive ext)
+    ext_lower = "." + args.ext.lower()
+    files = sorted([f for f in os.listdir(images_dir) if f.lower().endswith(ext_lower)])
     if not files:
         raise FileNotFoundError(f"No *.{args.ext} files found in {images_dir}")
-    
-    files = sorted([f for f in os.listdir(images_dir) if f.lower().endswith("." + args.ext.lower())])
 
-    # ⬇️ add this block here
+    # optional: restrict to a single basename via --only (without extension)
     if args.only:
-        target = args.only if args.only.lower().endswith("." + args.ext.lower()) else args.only + "." + args.ext
-        if target in files:
-            files = [target]
-        else:
-            raise FileNotFoundError(f"{target} not found in {images_dir}")
-
+        target_base = args.only.lower()
+        # exact basename match (case-insensitive)
+        matches = [f for f in files if os.path.splitext(f)[0].lower() == target_base]
+        if not matches:
+            # allow a partial match fallback (e.g., substring)
+            matches = [f for f in files if target_base in os.path.splitext(f)[0].lower()]
+        if not matches:
+            raise FileNotFoundError(
+                f"'{args.only}' not found in {images_dir}. "
+                f"Checked among {len(files)} *.{args.ext} files."
+            )
+        files = sorted(matches)
+        print(f"[info] --only matched {len(files)} file(s): {files}")
 
     chan_map = {
         "DAPI": args.chan_DAPI,

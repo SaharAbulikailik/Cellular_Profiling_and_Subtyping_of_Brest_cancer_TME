@@ -8,19 +8,19 @@ This repository contains the implementation for **cellular profiling and subtypi
 
 This project addresses the complexity of the tumor microenvironment by:
 
-- **Nuclear Segmentation**: Accurate segmentation of densely packed nuclei in multispectral immunofluorescence images using LoGSAGE-CBAM.
-- **Feature Extraction**: Morphometric and protein expression-based profiling of each cell.
-- **Lymphocyte Classification**: Classification of lymphocytes using a multi-layer perceptron (MLP).
-- **Tumor Subtyping**: Phenotype-driven tumor subtype discovery and association with growth latency and molecular expression patterns.
+* **Nuclear Segmentation**: Accurate segmentation of densely packed nuclei in multispectral immunofluorescence images using LoGSAGE-CBAM.
+* **Feature Extraction**: Morphometric and protein expression-based profiling of each cell.
+* **Lymphocyte Classification**: Classification of lymphocytes using a multi-layer perceptron (MLP).
+* **Tumor Subtyping**: Phenotype-driven tumor subtype discovery and association with growth latency and molecular expression patterns.
 
 ---
 
 ## 🌟 Highlights
 
-- Introduces **LoGSAGE-CBAM**, a dual-encoder segmentation model combining LoG-based saliency and Swin Transformer encoding.
-- Incorporates **curvature-aware loss** to enhance biological accuracy in nuclear boundaries.
-- Enables **cell classification and spatial profiling** using extracted cellular indices.
-- Reveals **subtype-specific immune and morphological signatures** predictive of growth and latency.
+* Introduces **LoGSAGE-CBAM**, a dual-encoder segmentation model combining LoG-based saliency and Swin Transformer encoding.
+* Incorporates **curvature-aware loss** to enhance biological accuracy in nuclear boundaries.
+* Enables **cell classification and spatial profiling** using extracted cellular indices.
+* Reveals **subtype-specific immune and morphological signatures** predictive of growth and latency.
 
 ---
 
@@ -32,11 +32,11 @@ The pipeline integrates imaging, segmentation, feature extraction, classificatio
   <img src="docs/Pipeline.png" alt="Pipeline Overview" width="700"/>
 </p>
 
-1. Tumor harvesting, staining, and multispectral imaging  
-2. Nuclear segmentation using LoGSAGE-CBAM  
-3. Feature extraction and cellular classification  
-4. Tumor subtyping and clinical association  
-5. Visualization and downstream analysis  
+1. Tumor harvesting, staining, and multispectral imaging
+2. Nuclear segmentation using LoGSAGE-CBAM
+3. Feature extraction and cellular classification
+4. Tumor subtyping and clinical association
+5. Visualization and downstream analysis
 
 ---
 
@@ -47,24 +47,30 @@ The pipeline integrates imaging, segmentation, feature extraction, classificatio
 </p>
 
 LoGSAGE-CBAM consists of two parallel encoders:
-- A **saliency encoder** using Laplacian-of-Gaussian filtered DAPI to highlight nuclear structures based on UNet encoder
-- A **Multi-spectral images encoder** based on a Swin Transformer
-- A **CBAM-based fusion block** to adaptively merge both representations
-- A UNet decoder
-- Model trained with a **composite loss**:
-  - **Dice Loss** for overlap accuracy
-  - **Curvature Loss** for smooth, accurate boundaries
+
+* A **saliency encoder** using Laplacian-of-Gaussian filtered DAPI to highlight nuclear structures based on UNet encoder
+* A **Multi-spectral images encoder** based on a Swin Transformer
+* A **CBAM-based fusion block** to adaptively merge both representations
+* A UNet decoder
+* Model trained with a **composite loss**:
+
+  * **Dice Loss** for overlap accuracy
+  * **Curvature Loss** for smooth, accurate boundaries
 
 ---
 
 ## 🧪 Analysis Workflow
 
-````markdown
-## 1)  **Segment Tumor Microenvironment Images (LoGSAGE-CBAM)**
+<p align="center">
+  <img src="docs/flow.png" alt="Analysis Workflow" width="700"/>
+</p>
 
-**Goal:** train the nuclear segmentation model on paired TIFF images/masks.
+## 1) **Segment Tumor Microenvironment Images (LoGSAGE-CBAM)**
 
-#### a) Create & activate the environment
+**Goal:** train the nuclear segmentation model on paired images/masks.
+
+### a) Create & activate the environment
+
 ```bash
 conda create -n CellProfiling python=3.10 -y
 conda activate CellProfiling
@@ -72,9 +78,10 @@ python -m pip install --upgrade pip setuptools wheel
 pip install -r requirements.txt
 ```
 
-#### b) Train
+### b) If you want to Train
 
-python /home/sahar/Cellular_Profiling_and_Subtyping_of_Brest_cancer_TME/src/segmentation_model/train.py \
+```bash
+python src/segmentation_model/train.py \
   --images_dir "$IMAGES" \
   --masks_dir  "$MASKS" \
   --output_dir "$OUT" \
@@ -84,28 +91,33 @@ python /home/sahar/Cellular_Profiling_and_Subtyping_of_Brest_cancer_TME/src/segm
   --lr 1e-4 \
   --val_split 0.2 \
   --seed 42
+```
 
-# from the repo root
-export PYTHONPATH="$(pwd)/src:${PYTHONPATH}"
+### c) Put your `.czi` files in: `src/analysis/Test_images/` and run inference
 
-# put your .czi files in: src/analysis/Test_images/
+```bash
 python src/analysis/Generate_masks.py
+```
 
+---
 
-## 2) Extract Morphological & Protein Features
+## 2) Extract Morphological & Protein Indices
 
 * Compute area, elongation, solidity, and intensities for DAPI, CD3, CD8, Ki67, Caspase, and pSMAD.
 
 ```bash
-(CellProfiling) analysis$> python /home/sahar/Cellular_Profiling_and_Subtyping_of_Brest_cancer_TME/src/analysis/process_masks.py
+python src/analysis/process_masks.py
 ```
+
 This reads `src/analysis/Test_images/*.czi` and matching masks in `src/analysis/Test_images/LoGSAGE-CBAM_masks/`, then writes `src/analysis/Processed_Images_Data.xlsx` with area, elongation, solidity, and per-channel intensities (DAPI, CD3, CD8, Ki67, Caspase, pSMAD).
 
-**Test on a single image (by basename, no extension):**
+### Test one image this way
 
 ```bash
-(CellProfiling) analysis$> python /home/sahar/Cellular_Profiling_and_Subtyping_of_Brest_cancer_TME/src/analysis/process_masks.py --only A1819-P0203-4MGLTumor-1
+python src/analysis/process_masks.py --only A1818_P0025_4MGRTumor_2
 ```
+
+---
 
 ## 3) Classify Lymphocytes (MLP)
 
@@ -113,17 +125,19 @@ This reads `src/analysis/Test_images/*.czi` and matching masks in `src/analysis/
 
 ### Input
 
-Excel file with columns (case-insensitive):
+Excel file with columns:
 
-* `area`, `pleomorphism` (or `solidity`), `elongation`, `mean_intensity_DAPI`, `total_intensity_DAPI`, `TARGET` (0/1)
+* `area`, `pleomorphism` (or `solidity`), `elongation` (or `eccentricity`), `mean_intensity_DAPI`, `total_intensity_DAPI`, `TARGET` (0/1)
 
 > If `TARGET` is not 0/1, the script maps the smallest label → 0 and largest → 1.
 
 ### Train & evaluate
 
 ```bash
-# from repo root (example)
-python run_mlp_and_lazy.py --data /home/sahar/Cellular_Profiling_and_Subtyping_of_Brest_cancer_TME/src/analysis/final_traindata.xlsx --out-model /home/sahar/Cellular_Profiling_and_Subtyping_of_Brest_cancer_TME/src/analysis/lymphocyte_mlp.pkl
+# from repo root
+python src/analysis/run_mlp_and_lazy.py \
+  --data path/to/excel.xlsx \
+  --out-model src/analysis/lymphocyte_mlp.pkl
 ```
 
 ### What you’ll see
@@ -133,18 +147,18 @@ python run_mlp_and_lazy.py --data /home/sahar/Cellular_Profiling_and_Subtyping_o
 {
   "Model": "MLPClassifier(64,32)",
   "Accuracy": 0.970,
-  "Precision": 0.964,
-  "Recall": 0.980,
-  "F1": 0.972,
-  "AUC": 0.996,
+  "Precision": 0.980,
+  "Recall": 0.970,
+  "F1": 0.970,
+  "AUC": 0.990,
   "N_test": 929
 }
 
 === LazyPredict-style (fallback) Baseline (3 d.p.) ===
              Model  Accuracy  Precision  Recall    F1   AUC
 LogisticRegression     0.969      0.956   0.986 0.971 0.995
-         LinearSVC     0.969      0.956   0.986 0.971 0.995
-      RandomForest     0.966      0.956   0.980 0.968 0.995
+         LinearSVC     0.970      0.970   0.960 0.960 0.970
+      RandomForest     0.970      0.970   0.960 0.960 0.970
                KNN     0.961      0.952   0.976 0.964 0.992
       DecisionTree     0.955      0.946   0.969 0.958 0.954
         GaussianNB     0.953      0.946   0.965 0.956 0.988
@@ -152,17 +166,34 @@ LogisticRegression     0.969      0.956   0.986 0.971 0.995
 [Saved] MLP model -> src/analysis/lymphocyte_mlp.pkl
 ```
 
-4. **Localize Lymphocytes**  
-   - Apply Delaunay triangulation for lymphocytes localization.
+### Run inference on all data
 
-5. **Cluster indecies via Consensus Clustering**  
-   - Perform clustering on each feature to define high and low values.
+```bash
+python src/analysis/classify_lymphocytes.py \
+  --data src/analysis/Processed_Images_Data.xlsx \
+  --model src/analysis/lymphocyte_mlp.pkl \
+  --min-area 100 --max-area 3000 \
+  --save-filtered src/analysis/Processed_Images_Data_classified.xlsx \
+  --out src/analysis/Processed_Images_Data_filtered.xlsx
+```
 
-6. **Quantify Feature Frequencies per Tumor**  
-   - Summarize morphological and expression profiles across tumors.
+---
 
-7. **Visualize Subtype Patterns**  
-   - Generate heatmaps, t-SNE plots, and Agressiveness curves (Latency and Growth) for subtype comparison.
+## 4. **Localize Lymphocytes**
+
+```bash
+python src/analysis/Lymphocytes_association.py
+```
+
+---
+
+## 5. **Cluster indices via Consensus Clustering**
+
+* **a)** Find cluster means (use the notebook `subtyping.ipynb`)
+* **b)** Associate each index to the closest cluster using Euclidean distance
+* **c)** Aggregate positive indices per tumor using mean
+* **d)** Put everything together from tumor/lymphocytes tables
+* **e)** Generate heatmaps, t-SNE plots, and **Aggressiveness** curves for subtype comparison.
 
 ---
 
@@ -173,28 +204,28 @@ LogisticRegression     0.969      0.956   0.986 0.971 0.995
 ├── docs
 │   ├── Model.png
 │   ├── Pipeline.png
-│   └── Results.png
-├── lymphocyte_env
-│   ├── bin/
-│   ├── lib/
-│   └── ...
+│   ├── Results.png
+│   ├── metric.png
+│   └── flow.png
 ├── README.md
 ├── requirements.txt
-├── saved_model/
-├── saved_models/
-└── src/
-    ├── analysis/
+└── src
+    ├── analysis
+    │   ├── Test_images
+    │   ├── classify_lymphocytes.py
     │   ├── consensus_clustering.py
-    │   ├── lymphocyte_association.ipynb
-    │   ├── Lymphocytes_classification.py
+    │   ├── Generate_masks.py
+    │   ├── Lymphocytes_association.py
     │   ├── nuclear_subtyping.ipynb
     │   ├── process_masks.py
-    │   └── simK_perweek.ipynb
-    └── segmentation_model/
-        ├── dataset/
-        ├── losses/
-        ├── models/
-        ├── __pycache__/
+    │   ├── run_mlp_and_lazy.py
+    │   ├── Processed_Images_Data.xlsx
+    │   └── Processed_Images_Data_classified.xlsx
+    └── segmentation_model
+        ├── dataset
+        ├── losses
+        ├── models
+        ├── saved_models
         └── train.py
 ```
 
@@ -206,15 +237,15 @@ LogisticRegression     0.969      0.956   0.986 0.971 0.995
   <img src="docs/Results.png" alt="Segmentation Results" width="700"/>
 </p>
 
-| Task                     | Metric                     | Score   |
-|--------------------------|----------------------------|---------|
-| **Segmentation**         | Dice Score                 | 95.5    |
-|                          | Relative Count Error (RCE) | 86.6    |
-| **Lymphocyte Detection** | Accuracy                   | 97.0    |
-|                          | Precision                  | 98.0    |
-|                          | Recall                     | 97.0    |
-|                          | AUC                        | 99.0    |
-| **Tumor Subtyping**      | # of Subtypes              | 4       |
+| Task                     | Metric                     | Score |
+| ------------------------ | -------------------------- | ----- |
+| **Segmentation**         | Dice Score                 | 95.5  |
+|                          | Relative Count Error (RCE) | 86.6  |
+| **Lymphocyte Detection** | Accuracy                   | 97.0  |
+|                          | Precision                  | 98.0  |
+|                          | Recall                     | 97.0  |
+|                          | AUC                        | 99.0  |
+| **Tumor Subtyping**      | # of Subtypes              | 4     |
 
 > **Note:** RCE (Relative Count Error) evaluates segmentation performance by comparing the number of predicted nuclei (N_pred) to the number of ground truth nuclei (N_true). It emphasizes biologically meaningful object-level accuracy.
 >
@@ -232,10 +263,9 @@ pip install -r requirements.txt
 python src/segmentation_model/train.py
 ```
 
-
 ---
 
 ## 📬 Contact
 
-For questions or collaborations, contact:  
-📧 **saharabulikailik@gmail.com**
+For questions or collaborations, contact:
+📧 **[saharabulikailik@gmail.com](mailto:saharabulikailik@gmail.com)**
