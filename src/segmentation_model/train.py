@@ -57,7 +57,7 @@ BATCH_SIZE = 4
 EPOCHS = 100
 WEIGHT_DECAY = 1e-4
 DATA_PATH = "src/segmentation_model/dataset/data"
-MODEL_SAVE_PATH = "./saved_models/logsage_cbam_best.pth"
+MODEL_SAVE_PATH = "/home/sahar/CellScopes-TME/src/segmentation_model/saved_models/logsage_cbam_best.pth"
 
 # Setup
 os.makedirs(os.path.dirname(MODEL_SAVE_PATH), exist_ok=True)

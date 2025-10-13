@@ -76,11 +76,18 @@ conda create -n CellProfiling python=3.10 -y
 conda activate CellProfiling
 python -m pip install --upgrade pip setuptools wheel
 pip install -r requirements.txt
+# ensure repo modules (e.g., segmentation_model) are importable
+export PYTHONPATH="$(pwd):$PYTHONPATH"
 ```
 
-### b) If you want to Train
+### b) Model training
+
+Train **LoGSAGE-CBAM** on paired images and masks.
 
 ```bash
+# from repo root (optional but recommended)
+export PYTHONPATH="$PWD/src:$PYTHONPATH"
+
 python src/segmentation_model/train.py \
   --images_dir "$IMAGES" \
   --masks_dir  "$MASKS" \
@@ -93,11 +100,83 @@ python src/segmentation_model/train.py \
   --seed 42
 ```
 
-### c) Put your `.czi` files in: `src/analysis/Test_images/` and run inference
+**Arguments**
+
+* `--images_dir` *(required)*: Folder of training images (e.g., `.czi` or pre-extracted 3-channel TIFF/PNG as expected by the dataloader).
+* `--masks_dir`  *(required)*: Matching **binary** masks (0/1 or 0/255), same filenames as images.
+* `--output_dir` *(required)*: Where checkpoints, logs, and metrics will be saved.
+* `--model` *(default: `swin_T_1`)*: Backbone preset used in our experiments.
+* `--epochs` *(default: 100)*: Number of training epochs.
+* `--batch_size` *(default: 4)*: Adjust based on GPU memory.
+* `--lr` *(default: 1e-4)*: Initial learning rate.
+* `--val_split` *(default: 0.2)*: Fraction of data used for validation.
+* `--seed` *(default: 42)*: Reproducibility.
+
+**Expected folder layout**
+
+```
+$IMAGES/
+  sample_001.czi
+  sample_002.czi
+  ...
+
+$MASKS/
+  sample_001.png   # binary mask for sample_001
+  sample_002.png
+  ...
+```
+
+**Outputs in `$OUT`**
+
+* `checkpoints/epoch_XX.pth` – model weights
+* `best.pth` – best checkpoint by validation metric
+* `train.log` – epoch metrics (losses, Dice, etc.)
+* Optional plots/CSVs depending on the script configuration
+
+**Tips**
+
+* If you run out of memory: lower `--batch_size` or use gradient accumulation (if supported).
+* If validation Dice plateaus early: try `--lr 5e-5` or light augmentation (see dataset transforms in `src/segmentation_model/dataset/`).
+* Ensure masks are **clean binary** (remove small speckles/holes) to stabilize training.
+
+
+### c) Model inference
+
+Run LoGSAGE-CBAM on your multi-spectral images to produce **binary masks** and **instance labels** (watershed).
 
 ```bash
-python src/analysis/Generate_masks.py
+# from repo root
+export PYTHONPATH="$PWD/src:$PYTHONPATH"
+
+python src/analysis/Generate_masks.py \
+  --model /home/sahar/CellScopes-TME/src/segmentation_model/saved_models/LoGSAGE_Multispec_sigma_Fusion3.pth \
+  --images /home/sahar/CellScopes-TME/src/analysis/Test_images \
+  --out-masks /home/sahar/CellScopes-TME/src/analysis/Test_images/LoGSAGE-CBAM_masks \
+  --out-labels /home/sahar/CellScopes-TME/src/analysis/Test_images/LoGSAGE-CBAM_labels \
+  --thresh 0.5 \
+  --min-distance 9
 ```
+
+**Arguments**
+
+* `--model` *(required)*: Path to trained weights (`.pth`).
+* `--images` *(required)*: Folder containing the input `.czi` images.
+* `--out-masks`: Output folder for **binary masks** (`*_mask.png`). Auto-created.
+* `--out-labels`: Output folder for **instance labels** (`*_labels.tiff`, 16-bit). Auto-created.
+* `--thresh` *(default: 0.5)*: Probability threshold to binarize the model output.
+* `--min-distance` *(default: 9)*: Peak spacing for `peak_local_max` used to seed the **watershed** (larger → fewer splits; smaller → more splits).
+
+**Outputs**
+
+* `LoGSAGE-CBAM_masks/<name>_mask.png` → 0/255 binary mask
+* `LoGSAGE-CBAM_labels/<name>_labels.tiff` → per-nucleus instance IDs (0 = background)
+
+**Notes**
+
+* Make sure `PYTHONPATH` includes `src/` so the model modules can be imported.
+* If you see **under-segmentation** (merged nuclei), try lowering `--min-distance` (e.g., 6–7) or raising `--thresh` slightly.
+* If you see **over-segmentation** (too many splits), raise `--min-distance` (e.g., 11–13) or lower `--thresh` a bit.
+
 
 ---
 
