@@ -272,7 +272,7 @@ python src/analysis/Lymphocytes_association.py
 * **b)** Associate each index to the closest cluster using Euclidean distance
 * **c)** Aggregate positive indices per tumor using mean
 * **d)** Put everything together from tumor/lymphocytes tables
-* **e)** Generate heatmaps, t-SNE plots, and **Aggressiveness** curves for subtype comparison.
+* **e)** Generate heatmaps, t-SNE plots, and Aggressiveness curves for subtype comparison.
 
 ---
 
