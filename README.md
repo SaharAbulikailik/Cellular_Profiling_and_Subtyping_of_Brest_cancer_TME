@@ -140,7 +140,7 @@ $MASKS/
 * Ensure masks are **clean binary** (remove small speckles/holes) to stabilize training.
 
 
-### c) Model inference
+### c) Generate masks
 
 Run LoGSAGE-CBAM on your multi-spectral images to produce **binary masks** and **instance labels** (watershed).
 
@@ -149,10 +149,10 @@ Run LoGSAGE-CBAM on your multi-spectral images to produce **binary masks** and *
 export PYTHONPATH="$PWD/src:$PYTHONPATH"
 
 python src/analysis/Generate_masks.py \
-  --model /home/sahar/CellScopes-TME/src/segmentation_model/saved_models/LoGSAGE_Multispec_sigma_Fusion3.pth \
-  --images /home/sahar/CellScopes-TME/src/analysis/Test_images \
-  --out-masks /home/sahar/CellScopes-TME/src/analysis/Test_images/LoGSAGE-CBAM_masks \
-  --out-labels /home/sahar/CellScopes-TME/src/analysis/Test_images/LoGSAGE-CBAM_labels \
+  --model /src/segmentation_model/saved_models/LoGSAGE_Multispec_sigma_Fusion3.pth \
+  --images /src/analysis/Test_images \
+  --out-masks /src/analysis/Test_images/LoGSAGE-CBAM_masks \
+  --out-labels /src/analysis/Test_images/LoGSAGE-CBAM_labels \
   --thresh 0.5 \
   --min-distance 9
 ```
@@ -177,6 +177,25 @@ python src/analysis/Generate_masks.py \
 * If you see **under-segmentation** (merged nuclei), try lowering `--min-distance` (e.g., 6–7) or raising `--thresh` slightly.
 * If you see **over-segmentation** (too many splits), raise `--min-distance` (e.g., 11–13) or lower `--thresh` a bit.
 
+
+### 🖼️ d) Inference with Overlay Visualization
+
+Run inference on any image and save:
+
+* **Binary masks**: `*_mask.png`
+* **Instance segmentation**: `*_labels.tiff` (watershed IDs)
+* **Visual overlays**: `*_overlay.png` (colored labels over grayscale input)
+
+```bash
+python src/analysis/Inference_code.py \
+  --model /src/segmentation_model/saved_models/LoGSAGE_Multispec_sigma_Fusion3.pth \
+  --images /path/to/input_tif_images \
+  --out-masks /path/to/output_masks \
+  --out-labels /path/to/output_labels \
+  --out-overlay /path/to/output_overlays \
+  --thresh 0.5 \
+  --min-distance 9
+```
 
 ---
 
